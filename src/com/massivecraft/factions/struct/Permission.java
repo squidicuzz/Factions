@@ -18,6 +18,7 @@ public enum Permission
 	CONFIG("config"),
 	CREATE("create"),
 	DEINVITE("deinvite"),
+	DEMOTE("demote"),
 	DESCRIPTION("description"),
 	DISBAND("disband"),
 	FLAG("flag"),
@@ -49,6 +50,7 @@ public enum Permission
 	POWER("power"),
 	POWER_ANY("power.any"),
 	POWERBOOST("powerboost"),
+	PROMOTE("promote"),
 	RELATION("relation"),
 	RELOAD("reload"),
 	SAVE("save"),
@@ -59,6 +61,7 @@ public enum Permission
 	TITLE("title"),
 	UNCLAIM("unclaim"),
 	UNCLAIM_ALL("unclaimall"),
+	UNCLAIM_CHUNK("unclaimchunk"),
 	VERSION("version"),
 	;
 	

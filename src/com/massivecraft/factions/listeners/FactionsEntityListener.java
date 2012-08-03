@@ -11,8 +11,11 @@ import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Explosive;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -105,8 +108,29 @@ public class FactionsEntityListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityExplode(EntityExplodeEvent event)
 	{
-		if (event.isCancelled()) return;
+		if ( event.isCancelled()) return;
+		
+		// NoBoom explosion Protection
+	    if (event.getEntity() instanceof Fireball || event.getEntity() instanceof Creeper || event.getEntity() instanceof Explosive)
+	    {
+	    	Faction faction = Board.getFactionAt(new FLocation(event.getLocation().getBlock()));
+	    	// Only update Explosion Protection on TNTPrimed or Fireball from within the chunk..
+	    	if ( !faction.hasOfflineExplosionProtection() )
+	    		faction.updateOfflineExplosionProtection(); 
+	    }
 
+		for (Block block : event.blockList())
+		{
+			Faction faction = Board.getFactionAt(new FLocation(block));
+			if (faction.hasOfflineExplosionProtection())
+			{
+				// faction is peaceful and has explosions set to disabled
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
+		// Flag Explosions Disable
 		Set<FLocation> explosionLocs = new HashSet<FLocation>();
 		for (Block block : event.blockList())
 		{

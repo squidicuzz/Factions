@@ -1,5 +1,7 @@
 package com.massivecraft.factions.listeners;
 
+import java.util.logging.Level;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -71,6 +73,9 @@ public class FactionsBlockListener implements Listener
 
 		FLocation loc = new FLocation(location);
 		Faction factionHere = Board.getFactionAt(loc);
+		
+		//me.msg( "factionHere.isNone: " + factionHere.isNone() + " :: Faction Here: " + factionHere.getId());
+		if (factionHere.isNone() && ! me.hasFaction()) return true;
 
 		if ( ! FPerm.BUILD.has(me, location) && FPerm.PAINBUILD.has(me, location))
 		{
@@ -81,7 +86,7 @@ public class FactionsBlockListener implements Listener
 			}
 			return true;
 		}
-		
+
 		return FPerm.BUILD.has(me, loc, true);
 	}
 	

@@ -1,6 +1,7 @@
 package com.massivecraft.factions;
 
 import java.util.*;
+import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,7 +26,7 @@ public class Faction extends Entity implements EconomyParticipator
 	// FIELD: fplayers
 	// speedy lookup of players in faction
 	private transient Set<FPlayer> fplayers = new HashSet<FPlayer>();
-
+	
 	// FIELD: invites
 	// Where string is a lowercase player name
 	private Set<String> invites; 
@@ -83,6 +84,10 @@ public class Faction extends Entity implements EconomyParticipator
 		this.home = null;
 	}
 	
+	// FIELD: lastOnlineTime
+	private long lastOnlineTime;
+	
+	
 	// FIELD: account (fake field)
 	// Bank functions
 	public double money;
@@ -107,6 +112,10 @@ public class Faction extends Entity implements EconomyParticipator
 	private double powerBoost;
 	public double getPowerBoost() { return this.powerBoost; }
 	public void setPowerBoost(double powerBoost) { this.powerBoost = powerBoost; }
+	
+	private double powerLoss;
+	public double getPowerLoss() { return this.powerLoss; }
+	public void setPowerLoss(double powerLoss) { this.powerLoss = powerLoss; }
 
 	// FIELDS: Flag management
 	// TODO: This will save... defaults if they where changed to...
@@ -202,7 +211,6 @@ public class Faction extends Entity implements EconomyParticipator
 		this.flagOverrides = new LinkedHashMap<FFlag, Boolean>();
 		this.permOverrides = new LinkedHashMap<FPerm, Set<Rel>>();
 	}
-	
 
 	// -------------------------------
 	// Understand the types
@@ -307,11 +315,22 @@ public class Faction extends Entity implements EconomyParticipator
 		{
 			ret += fplayer.getPower();
 		}
+	    if (Conf.scaleFactionPower)
+	    {
+	    	double TotalPowers = (ret) / this.getFPlayers().size();
+	    	double PowerMultiplier =  Math.pow(this.getFPlayers().size(), Conf.powerFTotalMupliplier);  
+	    	ret = (TotalPowers * PowerMultiplier);
+	    }
+		if (ret > getPowerMax())
+		{
+			ret = getPowerMax();
+		}
 		if (Conf.powerFactionMax > 0 && ret > Conf.powerFactionMax)
 		{
 			ret = Conf.powerFactionMax;
 		}
-		return ret + this.powerBoost;
+
+		return ret + this.powerBoost + this.powerLoss;
 	}
 	
 	public double getPowerMax()
@@ -326,6 +345,12 @@ public class Faction extends Entity implements EconomyParticipator
 		{
 			ret += fplayer.getPowerMax();
 		}
+	    if (Conf.scaleFactionPower)
+	    {
+	    	double TotalPowers = (ret - Conf.powerFactionLeaderBonus) / this.getFPlayers().size();
+	    	double PowerMultiplier =  Math.pow(this.getFPlayers().size(), Conf.powerFTotalMupliplier);  
+	    	ret = (TotalPowers * PowerMultiplier);
+	    }
 		if (Conf.powerFactionMax > 0 && ret > Conf.powerFactionMax)
 		{
 			ret = Conf.powerFactionMax;
@@ -590,5 +615,59 @@ public class Faction extends Entity implements EconomyParticipator
 		
 		// Clean the fplayers
 		FPlayers.i.clean();
+	}
+
+	//OfflineFactionProtection
+	public void updateOfflineExplosionProtection() {
+		//We've either gained or lost a player.
+		
+		if (id == "-1" || id == "-2" || getId() == "0")
+		{
+			return;
+		}
+		
+		if (this.getOnlinePlayers().size() <= 1 && this.getLastOnlineTime() + ( Conf.offlineExplosionProtectionDelay * 60 * 1000 ) < System.currentTimeMillis()) 
+		{
+			//No one is online, set the last online time
+			this.lastOnlineTime = System.currentTimeMillis();
+		}
+	}
+	
+	public boolean hasOfflineExplosionProtection() 
+	{
+		if (this.id == "-1" || this.id == "-2" )
+		{
+			return true;
+		}
+		else if ( (this.getId() == "-1" || this.getId() == "-2") && this.getFlag(FFlag.EXPLOSIONS) == false )
+		{
+			return true;
+		}
+		
+		long lastonlinetime = (long) (this.getLastOnlineTime() + ( Conf.offlineExplosionProtectionDelay * 60 * 1000 ));
+		
+		//No protection if we are online.
+		if ( this.getOnlinePlayers().size() > 0 || this.isNone() ) 
+		{
+			return false;
+		}
+		else if ( this.getOnlinePlayers().size() == 0 && lastonlinetime > System.currentTimeMillis())
+		{
+			updateOfflineExplosionProtection();
+		}
+				
+		if ( lastonlinetime > System.currentTimeMillis())
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
+	public long getLastOnlineTime()
+	{
+		return this.lastOnlineTime;
 	}
 }

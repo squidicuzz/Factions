@@ -33,7 +33,7 @@ public class FactionsChatListener implements Listener
 	{
 		this.p = p;
 	}
-	
+
 	public static Field fieldRegisteredListenerDotPriority;
 	public static final Pattern parsePattern;
 	static
@@ -47,7 +47,7 @@ public class FactionsChatListener implements Listener
 		{
 			P.p.log(Level.SEVERE, "A reflection trick is broken! This will lead to glitchy relation-colored-chat.");
 		}
-		
+
 		parsePattern = Pattern.compile("[{\\[]factions?_([a-zA-Z_]+)[}\\]]");
 	}
 	
@@ -99,6 +99,7 @@ public class FactionsChatListener implements Listener
 			return;
 		}
 		
+		
 		// So you want color eh? You monster :O
 		
 		// 1. We cancel the chat event on EventPriority.HIGHEST
@@ -111,7 +112,7 @@ public class FactionsChatListener implements Listener
 		
 		// 3. We log in console the way it's usually done (as in nms.NetServerHandler line~793).
 		Bukkit.getConsoleSender().sendMessage(String.format(monitorOnlyEvent.getFormat(), monitorOnlyEvent.getPlayer().getDisplayName(), monitorOnlyEvent.getMessage()));
-		
+			
 		// 4. We send out the messages to each player with relation color.
 		for (Player to : event.getRecipients())
 		{

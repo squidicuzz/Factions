@@ -9,6 +9,7 @@ import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.P;
 import com.massivecraft.factions.event.FPlayerJoinEvent;
 import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.factions.struct.Rel;
 
 public class CmdJoin extends FCommand
 {
@@ -88,13 +89,13 @@ public class CmdJoin extends FCommand
 		if (samePlayer && ! payForCommand(Conf.econCostJoin, "to join a faction", "for joining a faction")) return;
 
 		fme.msg("<i>%s successfully joined %s.", fplayer.describeTo(fme, true), faction.getTag(fme));
-
 		if (!samePlayer)
 			fplayer.msg("<i>%s moved you into the faction %s.", fme.describeTo(fplayer, true), faction.getTag(fplayer));
 		faction.msg("<i>%s joined your faction.", fplayer.describeTo(faction, true));
 
 		fplayer.resetFactionData();
 		fplayer.setFaction(faction);
+		fme.setRole(Rel.RECRUIT); //They have just joined a faction, start them out on the lowest rank.
 		faction.deinvite(fplayer);
 
 		if (Conf.logFactionJoin)
