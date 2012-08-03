@@ -32,6 +32,9 @@ public class Conf
 	// Power
 	public static double powerPlayerMax = 10.0;
 	public static double powerPlayerMin = -10.0;
+	public static double powerFactionLeaderBonus = 0.0;
+	public static double powerFTotalMupliplier = 0.60;
+	public static boolean scaleFactionPower = false; // Scales the total power by the players average power
 	public static double powerPlayerStarting = 10.0; // New players start out with this power level
 	public static double powerPerMinute = 0.2; // Default health rate... it takes 5 min to heal one power
 	public static double powerPerDeath = 4.0; // A death makes you lose 4 power
@@ -41,9 +44,12 @@ public class Conf
 	public static double powerOfflineLossPerDay = 0.0;  // players will lose this much power per day offline
 	public static double powerOfflineLossLimit = 0.0;  // players will no longer lose power from being offline once their power drops to this amount or less
 	public static double powerFactionMax = 0.0;  // if greater than 0, the cap on how much power a faction can have (additional power from players beyond that will act as a "buffer" of sorts)
+	public static boolean disbandOnLeaderNoPower= false; // Disbands the faction is the leaders power falls below Zero
 	
 	public static String prefixLeader = "**";
 	public static String prefixOfficer = "*";
+	public static String prefixMember = "+";
+	public static String prefixRecruit = "";
 	
 	public static int factionTagLengthMin = 3;
 	public static int factionTagLengthMax = 10;
@@ -138,6 +144,9 @@ public class Conf
 
 	//public static double considerFactionsReallyOfflineAfterXMinutes = 0.0;
 	
+	public static boolean protectOfflineFactionsFromExplosions = true;
+	public static double offlineExplosionProtectionDelay = 2.0;
+	
 	public static int actionDeniedPainAmount = 2;
 
 	// commands which will be prevented if the player is a member of a permanent faction
@@ -191,6 +200,7 @@ public class Conf
 	public static String capeAlly = "https://github.com/MassiveCraft/Factions/raw/master/capes/ally.png";
 	public static String capeEnemy = "https://github.com/MassiveCraft/Factions/raw/master/capes/enemy.png";
 	public static String capeMember = "https://github.com/MassiveCraft/Factions/raw/master/capes/member.png";
+	public static String capeRecruit = "https://github.com/MassiveCraft/Factions/raw/master/capes/member.png";
 	public static String capeNeutral = "https://github.com/MassiveCraft/Factions/raw/master/capes/neutral.png";
 	public static String capePeaceful = "https://github.com/MassiveCraft/Factions/raw/master/capes/peaceful.png";
 	
