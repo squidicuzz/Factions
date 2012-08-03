@@ -1,10 +1,8 @@
 package com.massivecraft.factions;
 
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.block.Block;
@@ -16,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import com.massivecraft.factions.adapters.FFlagTypeAdapter;
-import com.massivecraft.factions.adapters.FLocToStringSetTypeAdapter;
 import com.massivecraft.factions.adapters.FPermTypeAdapter;
 import com.massivecraft.factions.adapters.LocationTypeAdapter;
 import com.massivecraft.factions.adapters.RelTypeAdapter;
@@ -32,19 +29,19 @@ import com.massivecraft.factions.listeners.FactionsBlockListener;
 import com.massivecraft.factions.listeners.FactionsChatListener;
 import com.massivecraft.factions.listeners.FactionsEntityListener;
 import com.massivecraft.factions.listeners.FactionsExploitListener;
-import com.massivecraft.factions.listeners.FactionsHealthBarListener;
+import com.massivecraft.factions.listeners.FactionsAppearanceListener;
 import com.massivecraft.factions.listeners.FactionsPlayerListener;
 import com.massivecraft.factions.listeners.FactionsServerListener;
 import com.massivecraft.factions.struct.FFlag;
 import com.massivecraft.factions.struct.FPerm;
 import com.massivecraft.factions.struct.Rel;
+import com.massivecraft.factions.struct.TerritoryAccess;
 import com.massivecraft.factions.util.AutoLeaveTask;
 import com.massivecraft.factions.util.LazyLocation;
 import com.massivecraft.factions.zcore.MPlugin;
 import com.massivecraft.factions.zcore.util.TextUtil;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 
 public class P extends MPlugin
@@ -59,7 +56,7 @@ public class P extends MPlugin
 	public final FactionsExploitListener exploitListener;
 	public final FactionsBlockListener blockListener;
 	public final FactionsServerListener serverListener;
-	public final FactionsHealthBarListener healthBarListener;
+	public final FactionsAppearanceListener appearanceListener;
 	
 	// Persistance related
 	private boolean locked = false;
@@ -80,7 +77,7 @@ public class P extends MPlugin
 		this.exploitListener = new FactionsExploitListener();
 		this.blockListener = new FactionsBlockListener(this);
 		this.serverListener = new FactionsServerListener(this);
-		this.healthBarListener = new FactionsHealthBarListener(this);
+		this.appearanceListener = new FactionsAppearanceListener(this);
 	}
 
 
@@ -97,8 +94,8 @@ public class P extends MPlugin
 		Board.load();
 		
 		// Add Base Commands
-		this.cmdBase = new FCmdRoot();
 		this.cmdAutoHelp = new CmdAutoHelp();
+		this.cmdBase = new FCmdRoot();
 		this.getBaseCommands().add(cmdBase);
 
 		EssentialsFeatures.setup();
@@ -117,12 +114,13 @@ public class P extends MPlugin
 		startAutoLeaveTask(false);
 
 		// Register Event Handlers
-		getServer().getPluginManager().registerEvents(playerListener, this);
-		getServer().getPluginManager().registerEvents(chatListener, this);
-		getServer().getPluginManager().registerEvents(entityListener, this);
-		getServer().getPluginManager().registerEvents(exploitListener, this);
-		getServer().getPluginManager().registerEvents(blockListener, this);
-		getServer().getPluginManager().registerEvents(serverListener, this);
+		getServer().getPluginManager().registerEvents(this.playerListener, this);
+		getServer().getPluginManager().registerEvents(this.chatListener, this);
+		getServer().getPluginManager().registerEvents(this.entityListener, this);
+		getServer().getPluginManager().registerEvents(this.exploitListener, this);
+		getServer().getPluginManager().registerEvents(this.blockListener, this);
+		getServer().getPluginManager().registerEvents(this.serverListener, this);
+		getServer().getPluginManager().registerEvents(this.appearanceListener, this);
 
 		// since some other plugins execute commands directly through this command interface, provide it
 		this.getCommand(this.refCommand).setExecutor(this);
@@ -134,14 +132,12 @@ public class P extends MPlugin
 	@Override
 	public GsonBuilder getGsonBuilder()
 	{
-		Type mapFLocToStringSetType = new TypeToken<Map<FLocation, Set<String>>>(){}.getType();
-
 		return new GsonBuilder()
 		.setPrettyPrinting()
 		.disableHtmlEscaping()
 		.excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.VOLATILE)
 		.registerTypeAdapter(LazyLocation.class, new LocationTypeAdapter())
-		.registerTypeAdapter(mapFLocToStringSetType, new FLocToStringSetTypeAdapter())
+		.registerTypeAdapter(TerritoryAccess.class, new TerritoryAccess())
 		.registerTypeAdapter(Rel.class, new RelTypeAdapter())
 		.registerTypeAdapter(FPerm.class, new FPermTypeAdapter())
 		.registerTypeAdapter(FFlag.class, new FFlagTypeAdapter());

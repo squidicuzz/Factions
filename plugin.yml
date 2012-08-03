@@ -1,5 +1,11 @@
 name: Factions
+<<<<<<< HEAD
 version: 1.7.4_dev_mcwars_2012_05_2
+||||||| merged common ancestors
+version: 1.7.4_dev
+=======
+version: 1.7.5_dev
+>>>>>>> 7f228b648a4e809ac0f86b24183f9678bd435c69
 main: com.massivecraft.factions.P
 authors: [Olof Larsson, Brett Flannigan]
 softdepend: [PermissionsEx, Permissions, Essentials, EssentialsChat, HeroChat, iChat, LocalAreaChat, LWC, nChat, ChatManager, CAPI, AuthMe, Vault, Spout, WorldEdit, WorldGuard, AuthDB, CaptureThePoints, CombatTag]
@@ -30,14 +36,13 @@ permissions:
       factions.join.others: true
       factions.leader.any: true
       factions.officer.any: true
+      factions.access.any: true
   factions.kit.halfmod:
     description: Can use adminmode and chat spy
     children:
       factions.kit.fullplayer: true
       factions.adminmode: true
-      factions.chatspy: true
   factions.kit.fullplayer:
-    default: true
     description: Can also create new factions.
     children:
       factions.kit.halfplayer: true
@@ -45,8 +50,11 @@ permissions:
   factions.kit.halfplayer:
     description: Can do all but create factions.
     children:
+      factions.access: true
+      factions.access.view: true
       factions.autoclaim: true
-      factions.chat: true
+      factions.cape: true
+      factions.cape.*: true
       factions.claim: true
       factions.deinvite: true
       factions.demote: true
@@ -77,14 +85,29 @@ permissions:
       factions.unclaim: true
       factions.unclaimall: true
       factions.version: true
+  factions.access:
+    description: grant territory access for your faction, with the proper fperm
+  factions.access.any:
+    description: grant territory access for any faction
+  factions.access.view:
+    description: view territory access info for your faction
   factions.adminmode:
     description: enable admin bypass mode
-  factions.chatspy:
-    description: enable admin chat spy mode
   factions.autoclaim:
     description: auto-claim land as you walk around
-  factions.chat:
-    description: change chat mode
+  factions.cape:
+    description: manage faction capes
+  factions.cape.*:
+    children:
+      factions.cape.get: true
+      factions.cape.set: true
+      factions.cape.remove: true
+  factions.cape.get:
+    description: get faction cape
+  factions.cape.set:
+    description: set faction cape
+  factions.cape.remove:
+    description: remove faction cape
   factions.claim:
     description: claim land where you are standing
   factions.config:

@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.util.NumberConversions;
@@ -34,6 +33,7 @@ import com.massivecraft.factions.integration.SpoutFeatures;
 import com.massivecraft.factions.struct.FFlag;
 import com.massivecraft.factions.struct.FPerm;
 import com.massivecraft.factions.struct.Rel;
+import com.massivecraft.factions.struct.TerritoryAccess;
 import com.massivecraft.factions.util.VisualizeUtil;
 
 
@@ -54,18 +54,11 @@ public class FactionsPlayerListener implements Listener
 		// Update the lastLoginTime for this fplayer
 		me.setLastLoginTime(System.currentTimeMillis());
 
-/*		This is now done in a separate task which runs every few minutes
-		// Run the member auto kick routine. Twice to get to the admins...
-		FPlayers.i.autoLeaveOnInactivityRoutine();
-		FPlayers.i.autoLeaveOnInactivityRoutine();*/
-		
 		Faction faction = me.getFaction();
 		if( me.hasFaction() ) {
 			//Notify our faction that the number of online players has changed.	
 			faction.updateOfflineExplosionProtection();
 		}
-
-		SpoutFeatures.updateAppearancesShortly(event.getPlayer());
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -91,9 +84,6 @@ public class FactionsPlayerListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
-		// Did we change block?
-		if (event.getFrom().equals(event.getTo())) return;
-				
 		Player player = event.getPlayer();
 		FPlayer me = FPlayers.i.get(player);
 		
@@ -106,20 +96,30 @@ public class FactionsPlayerListener implements Listener
 		// Yes we did change coord (:
 		
 		me.setLastStoodAt(to);
+		TerritoryAccess access = Board.getTerritoryAccessAt(to);
 
 		// Did we change "host"(faction)?
-		boolean changedFaction = (Board.getFactionAt(from) != Board.getFactionAt(to));
+		boolean changedFaction = (Board.getFactionAt(from) != access.getHostFaction());
 
-		if (changedFaction && SpoutFeatures.updateTerritoryDisplay(me))
-			changedFaction = false;
+		// let Spout handle most of this if it's available
+		boolean handledBySpout = changedFaction && SpoutFeatures.updateTerritoryDisplay(me);
 		
 		if (me.isMapAutoUpdating())
 		{
 			me.sendMessage(Board.getMap(me.getFaction(), to, player.getLocation().getYaw()));
 		}
-		else if (changedFaction)
+		else if (changedFaction && ! handledBySpout)
 		{
 			me.sendFactionHereMessage();
+		}
+
+		// show access info message if needed
+		if ( ! handledBySpout && ! SpoutFeatures.updateAccessInfo(me) && ! access.isDefault())
+		{
+			if (access.subjectHasAccess(me))
+				me.msg("<g>You have access to this area.");
+			else if (access.subjectAccessIsRestricted(me))
+				me.msg("<b>This area has restricted access.");
 		}
 
 		if (me.getAutoClaimFor() != null)
@@ -418,11 +418,5 @@ public class FactionsPlayerListener implements Listener
 		if (blockFrom.equals(blockTo)) return;
 		
 		VisualizeUtil.clear(event.getPlayer());
-	}
-	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerPreLogin(PlayerPreLoginEvent event)
-	{
-		VisualizeUtil.onPlayerPreLogin(event.getName());
 	}
 }

@@ -54,13 +54,14 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		if (oldFaction != null) oldFaction.removeFPlayer(this);
 		faction.addFPlayer(this);
 		this.factionId = faction.getId();
-		SpoutFeatures.updateAppearances(this.getPlayer());
+		SpoutFeatures.updateTitle(this, null);
+		SpoutFeatures.updateTitle(null, this);
 	}
 	
 	// FIELD: role
 	private Rel role;
 	public Rel getRole() { return this.role; }
-	public void setRole(Rel role) { this.role = role; SpoutFeatures.updateAppearances(this.getPlayer()); }
+	public void setRole(Rel role) { this.role = role; SpoutFeatures.updateTitle(this, null); }
 	
 	// FIELD: title
 	private String title;
@@ -142,7 +143,9 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 
 		if (doSpoutUpdate)
 		{
-			SpoutFeatures.updateAppearances(this.getPlayer());
+			SpoutFeatures.updateTitle(this, null);
+			SpoutFeatures.updateTitle(null, this);
+			SpoutFeatures.updateCape(this.getPlayer(), null);
 		}
 	}
 	
@@ -598,6 +601,10 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		else if (Conf.claimedLandsMax != 0 && ownedLand >= Conf.claimedLandsMax && ! forFaction.getFlag(FFlag.INFPOWER))
 		{
 			error = P.p.txt.parse("<b>Limit reached. You can't claim more land!");
+		}
+		else if ( ! Conf.claimingFromOthersAllowed && currentFaction.isNormal())
+		{
+			error = P.p.txt.parse("<b>You may not claim land from others.");
 		}
 		else if (currentFaction.getRelationTo(forFaction).isAtLeast(Rel.TRUCE) && ! currentFaction.isNone())
 		{

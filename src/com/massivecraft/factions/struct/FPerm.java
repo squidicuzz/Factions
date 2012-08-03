@@ -1,9 +1,8 @@
 package com.massivecraft.factions.struct;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -31,10 +30,13 @@ public enum FPerm
 	BUTTON("button", "use stone buttons",          Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY),
 	LEVER("lever", "use levers",                   Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY),
 	CONTAINER("container", "use containers",       Rel.LEADER, Rel.OFFICER, Rel.MEMBER),
+	INVITE("invite", "invite players",             Rel.LEADER, Rel.OFFICER),
 	KICK("kick", "kick members",                   Rel.LEADER, Rel.OFFICER),
 	SETHOME("sethome", "set the home",             Rel.LEADER, Rel.OFFICER),
 	WITHDRAW("withdraw", "withdraw money",         Rel.LEADER, Rel.OFFICER),
 	TERRITORY("territory", "claim or unclaim",     Rel.LEADER, Rel.OFFICER),
+	CAPE("cape", "set the cape",                   Rel.LEADER, Rel.OFFICER),
+	ACCESS("access", "grant territory access",     Rel.LEADER, Rel.OFFICER),
 	DISBAND("disband", "disband the faction",      Rel.LEADER),
 	PERMS("perms", "manage permissions",           Rel.LEADER),
 	;
@@ -71,16 +73,19 @@ public enum FPerm
 	public static FPerm parse(String str)
 	{
 		str = str.toLowerCase();
+		if (str.startsWith("a"))   return ACCESS;
 		if (str.startsWith("bui")) return BUILD;
 		if (str.startsWith("pa"))  return PAINBUILD;
 		if (str.startsWith("do"))  return DOOR;
 		if (str.startsWith("but")) return BUTTON;
 		if (str.startsWith("l"))   return LEVER;
 		if (str.startsWith("co"))  return CONTAINER;
+		if (str.startsWith("i"))   return INVITE;
 		if (str.startsWith("k"))   return KICK;
 		if (str.startsWith("s"))   return SETHOME;
 		if (str.startsWith("w"))   return WITHDRAW;
 		if (str.startsWith("t"))   return TERRITORY;
+		if (str.startsWith("ca"))  return CAPE;
 		if (str.startsWith("di"))  return DISBAND;
 		if (str.startsWith("pe"))  return PERMS;
 		return null;
@@ -123,42 +128,14 @@ public enum FPerm
 		}
 		return ret;
 	}
-	
-	public static Set<Rel> parseRelDeltas(String str, Set<Rel> current)
+
+	// Perms which apply strictly to granting territory access
+	private static final Set<FPerm> TerritoryPerms = EnumSet.of(BUILD, DOOR, BUTTON, LEVER, CONTAINER);
+	public boolean isTerritoryPerm()
 	{
-		Set<Rel> ret = new HashSet<Rel>();
-		ret.addAll(current);
-		
-		List<String> nodes = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
-		
-		for (String node : nodes)
-		{
-			boolean add = true;
-			if (node.startsWith("-"))
-			{
-				add = false;
-				node = node.substring(1);
-			}
-			else if (node.startsWith("+"))
-			{
-				node = node.substring(1);
-			}
-			Rel rel = Rel.parse(node);
-			
-			if (rel == null) continue;
-			
-			if (add)
-			{
-				ret.add(rel);
-			}
-			else
-			{
-				ret.remove(rel);
-			}
-		}
-		return ret; 
+		return TerritoryPerms.contains(this);
 	}
-	
+
 	private static final String errorpattern = "%s<b> does not allow you to %s<b>.";
 	public boolean has(Object testSubject, Faction hostFaction, boolean informIfNot)
 	{
@@ -203,8 +180,26 @@ public enum FPerm
 	}
 	public boolean has(Object testSubject, FLocation floc, boolean informIfNot)
 	{
-		Faction factionThere = Board.getFactionAt(floc);
-		return this.has(testSubject, factionThere, informIfNot);
+		TerritoryAccess access = Board.getTerritoryAccessAt(floc);
+		if (this.isTerritoryPerm())
+		{
+			if (access.subjectHasAccess(testSubject)) return true;
+			if (access.subjectAccessIsRestricted(testSubject))
+			{
+				if (informIfNot)
+				{
+					FPlayer notify = null;
+					if (testSubject instanceof Player)
+						notify = FPlayers.i.get((Player)testSubject);
+					else if (testSubject instanceof FPlayer)
+						notify = (FPlayer)testSubject;
+					if (notify != null)
+						notify.msg("<b>This territory owned by your faction has restricted access.");
+				}
+				return false;
+			}
+		}
+		return this.has(testSubject, access.getHostFaction(), informIfNot);
 	}
 	public boolean has(Object testSubject, Location loc, boolean informIfNot)
 	{

@@ -93,7 +93,8 @@ public abstract class FRelationCommand extends FCommand
 			myFaction.msg("<i>This will have no effect while your faction is peaceful.");
 		}
 
-		SpoutFeatures.updateAppearances(myFaction, them);
+		SpoutFeatures.updateTitle(myFaction, them);
+		SpoutFeatures.updateTitle(them, myFaction);
 		SpoutFeatures.updateTerritoryDisplayLoc(null);
 	}
 }

@@ -3,12 +3,15 @@ package com.massivecraft.factions.cmd;
 import java.util.Collections;
 
 import com.massivecraft.factions.Conf;
+import com.massivecraft.factions.P;
 
 public class FCmdRoot extends FCommand
 {
+	public CmdAccess cmdAccess = new CmdAccess();
 	public CmdLeader cmdLeader = new CmdLeader();
 	public CmdAutoClaim cmdAutoClaim = new CmdAutoClaim();
 	public CmdAdmin cmdBypass = new CmdAdmin();
+	public CmdCape cmdCape = new CmdCape();
 	public CmdClaim cmdClaim = new CmdClaim();
 	public CmdConfig cmdConfig = new CmdConfig();
 	public CmdCreate cmdCreate = new CmdCreate();
@@ -17,7 +20,6 @@ public class FCmdRoot extends FCommand
 	public CmdDescription cmdDescription = new CmdDescription();
 	public CmdDisband cmdDisband = new CmdDisband();
 	public CmdFlag cmdFlag = new CmdFlag();
-	public CmdHelp cmdHelp = new CmdHelp();
 	public CmdHome cmdHome = new CmdHome();
 	public CmdInvite cmdInvite = new CmdInvite();
 	public CmdJoin cmdJoin = new CmdJoin();
@@ -68,11 +70,11 @@ public class FCmdRoot extends FCommand
 		this.setHelpShort("The faction base command");
 		this.helpLong.add(p.txt.parseTags("<i>This command contains all faction stuff."));
 		
-		//this.subCommands.add(p.cmdHelp);
-		
-		this.addSubCommand(this.cmdLeader);
+		this.addSubCommand(P.p.cmdAutoHelp);
+		this.addSubCommand(this.cmdAccess);
 		this.addSubCommand(this.cmdAutoClaim);
 		this.addSubCommand(this.cmdBypass);
+		this.addSubCommand(this.cmdCape);
 		this.addSubCommand(this.cmdClaim);
 		this.addSubCommand(this.cmdConfig);
 		this.addSubCommand(this.cmdCreate);
@@ -81,11 +83,12 @@ public class FCmdRoot extends FCommand
 		this.addSubCommand(this.cmdDescription);
 		this.addSubCommand(this.cmdDisband);
 		this.addSubCommand(this.cmdFlag);
-		this.addSubCommand(this.cmdHelp);
+		//this.addSubCommand(this.cmdHelp);
 		this.addSubCommand(this.cmdHome);
 		this.addSubCommand(this.cmdInvite);
 		this.addSubCommand(this.cmdJoin);
 		this.addSubCommand(this.cmdKick);
+		this.addSubCommand(this.cmdLeader);
 		this.addSubCommand(this.cmdLeave);
 		this.addSubCommand(this.cmdList);
 		this.addSubCommand(this.cmdLock);
@@ -117,7 +120,7 @@ public class FCmdRoot extends FCommand
 	public void perform()
 	{
 		this.commandChain.add(this);
-		this.cmdHelp.execute(this.sender, this.args, this.commandChain);
+		P.p.cmdAutoHelp.execute(this.sender, this.args, this.commandChain);
 	}
 
 }

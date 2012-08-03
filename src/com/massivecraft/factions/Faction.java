@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import com.massivecraft.factions.iface.EconomyParticipator;
 import com.massivecraft.factions.iface.RelationParticipator;
 import com.massivecraft.factions.integration.Econ;
+import com.massivecraft.factions.integration.SpoutFeatures;
 import com.massivecraft.factions.struct.FFlag;
 import com.massivecraft.factions.struct.FPerm;
 import com.massivecraft.factions.struct.Rel;
@@ -76,7 +77,7 @@ public class Faction extends Entity implements EconomyParticipator
 	}
 	public void confirmValidHome()
 	{
-		if (!Conf.homesMustBeInClaimedTerritory || this.home == null || Board.getFactionAt(new FLocation(this.home.getLocation())) == this)
+		if (!Conf.homesMustBeInClaimedTerritory || this.home == null || (this.home.getLocation() != null && Board.getFactionAt(new FLocation(this.home.getLocation())) == this))
 			return;
 
 		msg("<b>Your faction home has been un-set since it is no longer in your territory.");
@@ -100,6 +101,11 @@ public class Faction extends Entity implements EconomyParticipator
 
 		return aid;
 	}
+	
+	// FIELD: cape
+	private String cape;
+	public String getCape() { return cape; }
+	public void setCape(String val) { this.cape = val; SpoutFeatures.updateCape(this, null); }
 
 	// FIELD: powerBoost
 	// special increase/decrease to default and max power for this faction
@@ -139,6 +145,7 @@ public class Faction extends Entity implements EconomyParticipator
 		return ret;
 	}
 	
+	/*
 	public void addPermittedRelation(FPerm perm, Rel rel)
 	{
 		Set<Rel> newPermittedRelations = EnumSet.noneOf(Rel.class);
@@ -152,6 +159,21 @@ public class Faction extends Entity implements EconomyParticipator
 		Set<Rel> newPermittedRelations = EnumSet.noneOf(Rel.class);
 		newPermittedRelations.addAll(this.getPermittedRelations(perm));
 		newPermittedRelations.remove(rel);
+		this.setPermittedRelations(perm, newPermittedRelations);
+	}*/
+	
+	public void setRelationPermitted(FPerm perm, Rel rel, boolean permitted)
+	{
+		Set<Rel> newPermittedRelations = EnumSet.noneOf(Rel.class);
+		newPermittedRelations.addAll(this.getPermittedRelations(perm));
+		if (permitted)
+		{
+			newPermittedRelations.add(rel);
+		}
+		else
+		{
+			newPermittedRelations.remove(rel);
+		}
 		this.setPermittedRelations(perm, newPermittedRelations);
 	}
 	

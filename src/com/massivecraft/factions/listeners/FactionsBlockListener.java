@@ -57,8 +57,13 @@ public class FactionsBlockListener implements Listener
 			event.setCancelled(true);
 		}
 	}
-	
+
 	public static boolean playerCanBuildDestroyBlock(Player player, Block block, String action, boolean justCheck)
+	{
+		return playerCanBuildDestroyBlock(player, block.getLocation(), action, justCheck);
+	}
+	
+	public static boolean playerCanBuildDestroyBlock(Player player, Location location, String action, boolean justCheck)
 	{
 		String name = player.getName();
 		if (Conf.playersWhoBypassAllProtection.contains(name)) return true;
@@ -66,7 +71,6 @@ public class FactionsBlockListener implements Listener
 		FPlayer me = FPlayers.i.get(name);
 		if (me.hasAdminMode()) return true;
 
-		Location location = block.getLocation();
 		FLocation loc = new FLocation(location);
 		Faction factionHere = Board.getFactionAt(loc);
 		

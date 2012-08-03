@@ -5,10 +5,15 @@ import com.massivecraft.factions.P;
 
 public enum Permission
 {
+	ACCESS("access"),
+	ACCESS_ANY("access.any"),
+	ACCESS_VIEW("access.view"),
 	ADMIN("adminmode"),
 	AUTOCLAIM("autoclaim"),
-	CHAT("chat"),
-	CHATSPY("chatspy"),
+	CAPE("cape"),
+	CAPE_GET("cape.get"),
+	CAPE_SET("cape.set"),
+	CAPE_REMOVE("cape.remove"),
 	CLAIM("claim"),
 	CONFIG("config"),
 	CREATE("create"),

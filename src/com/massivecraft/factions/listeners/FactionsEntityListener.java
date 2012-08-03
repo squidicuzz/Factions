@@ -2,6 +2,7 @@ package com.massivecraft.factions.listeners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -109,7 +110,7 @@ public class FactionsEntityListener implements Listener
 	{
 		if ( event.isCancelled()) return;
 		
-	    // "NoBoom" offline faction protection area block deny.
+		// NoBoom explosion Protection
 	    if (event.getEntity() instanceof Fireball || event.getEntity() instanceof Creeper || event.getEntity() instanceof Explosive)
 	    {
 	    	Faction faction = Board.getFactionAt(new FLocation(event.getLocation().getBlock()));
@@ -117,13 +118,30 @@ public class FactionsEntityListener implements Listener
 	    	if ( !faction.hasOfflineExplosionProtection() )
 	    		faction.updateOfflineExplosionProtection(); 
 	    }
-		
+
 		for (Block block : event.blockList())
 		{
 			Faction faction = Board.getFactionAt(new FLocation(block));
 			if (faction.hasOfflineExplosionProtection())
 			{
 				// faction is peaceful and has explosions set to disabled
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
+		// Flag Explosions Disable
+		Set<FLocation> explosionLocs = new HashSet<FLocation>();
+		for (Block block : event.blockList())
+		{
+			explosionLocs.add(new FLocation(block));
+		}
+		for (FLocation loc : explosionLocs)
+		{
+			Faction faction = Board.getFactionAt(loc);
+			if (faction.getFlag(FFlag.EXPLOSIONS) == false)
+			{
+				// faction has explosions disabled
 				event.setCancelled(true);
 				return;
 			}
