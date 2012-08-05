@@ -114,7 +114,7 @@ public class Factions extends EntityCollection<Faction>
 		faction.setFlag(FFlag.INFPOWER, true);
 		faction.setFlag(FFlag.POWERLOSS, true);
 		faction.setFlag(FFlag.PVP, true);
-		faction.setFlag(FFlag.FRIENDLYFIRE, false);
+		faction.setFlag(FFlag.FRIENDLYFIRE, true);
 		faction.setFlag(FFlag.MONSTERS, true);
 		faction.setFlag(FFlag.EXPLOSIONS, true);
 		faction.setFlag(FFlag.FIRESPREAD, true);
