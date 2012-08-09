@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import com.massivecraft.factions.Board;
 import com.massivecraft.factions.Conf;
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.Faction;
@@ -293,7 +294,7 @@ public class Econ
 	}
 
 	// calculate the cost for claiming land
-	public static double calculateClaimCost(int ownedLand, boolean takingFromAnotherFaction)
+	public static double calculateClaimCost(int ownedLand, boolean takingFromAnotherFaction, double fee)
 	{
 		if ( ! shouldBeUsed())
 		{
@@ -302,14 +303,14 @@ public class Econ
 
 		// basic claim cost, plus land inflation cost, minus the potential bonus given for claiming from another faction
 		return Conf.econCostClaimWilderness
-			+ (Conf.econCostClaimWilderness * Conf.econClaimAdditionalMultiplier * ownedLand)
+			+ ((Conf.econCostClaimWilderness + fee) * Conf.econClaimAdditionalMultiplier * ownedLand)
 			- (takingFromAnotherFaction ? Conf.econCostClaimFromFactionBonus: 0);
 	}
 
 	// calculate refund amount for unclaiming land
 	public static double calculateClaimRefund(int ownedLand)
 	{
-		return calculateClaimCost(ownedLand - 1, false) * Conf.econClaimRefundMultiplier;
+		return calculateClaimCost(ownedLand - 1, false, 0) * Conf.econClaimRefundMultiplier;
 	}
 
 	// calculate value of all owned land
@@ -317,7 +318,7 @@ public class Econ
 	{
 		double amount = 0;
 		for (int x = 0; x < ownedLand; x++) {
-			amount += calculateClaimCost(x, false);
+			amount += calculateClaimCost(x, false, 0);
 		}
 		return amount;
 	}

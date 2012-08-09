@@ -660,13 +660,14 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		// if economy is enabled and they're not on the bypass list, make sure they can pay
 		boolean mustPay = Econ.shouldBeUsed() && ! this.hasAdminMode();
 		double cost = 0.0;
+		double fee = 0.0;
 		EconomyParticipator payee = null;
 		if (mustPay)
 		{
-			cost = Econ.calculateClaimCost(ownedLand, currentFaction.isNormal());
-
 			if (Conf.econClaimUnconnectedFee != 0.0 && forFaction.getLandRoundedInWorld(flocation.getWorldName()) > 0 && !Board.isConnectedLocation(flocation, forFaction))
-				cost += Conf.econClaimUnconnectedFee;
+				fee = Conf.econClaimUnconnectedFee;
+			
+			cost = Econ.calculateClaimCost(ownedLand, currentFaction.isNormal(), fee);
 
 			if(Conf.bankEnabled && Conf.bankFactionPaysLandCosts && this.hasFaction())
 				payee = this.getFaction();
