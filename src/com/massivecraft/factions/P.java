@@ -21,7 +21,7 @@ import com.massivecraft.factions.cmd.*;
 import com.massivecraft.factions.integration.capi.CapiFeatures;
 import com.massivecraft.factions.integration.Econ;
 import com.massivecraft.factions.integration.EssentialsFeatures;
-import com.massivecraft.factions.integration.HerochatFeatures;
+// import com.massivecraft.factions.integration.HerochatFeatures;
 import com.massivecraft.factions.integration.LWCFeatures;
 import com.massivecraft.factions.integration.SpoutFeatures;
 import com.massivecraft.factions.integration.Worldguard;
@@ -102,7 +102,7 @@ public class P extends MPlugin
 		SpoutFeatures.setup();
 		Econ.setup();
 		CapiFeatures.setup();
-		HerochatFeatures.setup();
+		// HerochatFeatures.setup();
 		LWCFeatures.setup();
 		
 		if(Conf.worldGuardChecking)
