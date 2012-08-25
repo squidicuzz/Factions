@@ -1,5 +1,7 @@
 package com.massivecraft.factions.integration;
 
+import java.util.Collection;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -10,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.ChannelChatEvent;
+import com.dthielke.herochat.Chatter;
 import com.massivecraft.factions.Conf;
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
@@ -46,16 +49,19 @@ public class HerochatFeatures implements Listener
 		// Do common setup
 		Player sender = event.getSender().getPlayer();
 		FPlayer fpsender = FPlayers.i.get(sender);
-		event.getBukkitEvent().getRecipients().clear();
+		//event.getBukkitEvent().getRecipients().clear();
+		//event.getChannel()
 		if ( ! fpsender.hasFaction())
 		{
 			sender.sendMessage(ChatColor.YELLOW.toString()+"You must join a faction to use the "+ch.getColor().toString()+ch.getName()+ChatColor.YELLOW.toString()+"-channel.");
-			event.getBukkitEvent().setCancelled(true);
+			//.setCancelled(true);
+			event.setMessage(null);
 			return;
 		}
 		
 		Faction faction = fpsender.getFaction();
-		event.getBukkitEvent().getRecipients().addAll(faction.getOnlinePlayers());
+		//event.getBukkitEvent().getRecipients().addAll(faction.getOnlinePlayers());
+		event.getChannel().getMembers().addAll((Collection<? extends Chatter>) faction.getOnlinePlayers());
 		
 		if (isAllyChat)
 		{
@@ -63,7 +69,8 @@ public class HerochatFeatures implements Listener
 			{
 				if(faction.getRelationTo(fplayer) == Rel.ALLY)
 				{
-					event.getBukkitEvent().getRecipients().add(fplayer.getPlayer());
+					//event.getBukkitEvent().getRecipients().add(fplayer.getPlayer());
+					event.getChannel().getMembers().add((Chatter) fplayer.getPlayer());
 				}
 			}
 		}
