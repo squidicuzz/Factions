@@ -76,7 +76,7 @@ public class Conf
 	public static boolean chatParseTags = true;
 	public static boolean chatParseTagsColored = false;
 	public static Map<String, String> chatSingleFormats = new HashMap<String, String>();
-	public static transient boolean chatTagHandledByAnotherPlugin = true; // Why do we need this? (Olof asks)
+	public static transient boolean chatTagHandledByAnotherPlugin = false; // Why do we need this? (Olof asks)
 	public static String chatTagFormat = "%s"+ChatColor.WHITE; // This one is almost deprecated now right? or is it?
 	
 	// Herochat
