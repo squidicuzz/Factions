@@ -32,9 +32,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -164,8 +164,8 @@ public class FactionsEntityListener implements Listener
 			for (Block target : targets)
 			{
 				int id = target.getTypeId();
-				// ignore air, bedrock, water, lava, obsidian, enchanting table... too bad we can't get a working material durability # yet
-				if (id != 0 && (id < 7 || id > 11) && id != 49 && id != 116)
+				// ignore air, bedrock, water, lava, obsidian, enchanting table, etc.... too bad we can't get a blast resistance value through Bukkit yet
+				if (id != 0 && (id < 7 || id > 11) && id != 49 && id != 90 && id != 116 && id != 119 && id != 120 && id != 130)
 					target.breakNaturally();
 			}
 		}
@@ -317,7 +317,7 @@ public class FactionsEntityListener implements Listener
 		Rel relation = defendFaction.getRelationTo(attackFaction);
 		
 		// Check the relation
-		if (relation.isAtLeast(Conf.friendlyFireFromRel) && defLocFaction.getFlag(FFlag.FRIENDLYFIRE) == false)
+		if (defender.hasFaction() && relation.isAtLeast(Conf.friendlyFireFromRel) && defLocFaction.getFlag(FFlag.FRIENDLYFIRE) == false)
 		{
 			if (notify) attacker.msg("<i>You can't hurt %s<i>.", relation.getDescPlayerMany());
 			return false;
@@ -336,7 +336,7 @@ public class FactionsEntityListener implements Listener
 		}
 		
 		// Damage will be dealt. However check if the damage should be reduced.
-		if (damage > 0.0 && ownTerritory && Conf.territoryShieldFactor > 0)
+		if (damage > 0.0 && defender.hasFaction() && ownTerritory && Conf.territoryShieldFactor > 0)
 		{
 			int newDamage = (int)Math.ceil(damage * (1D - Conf.territoryShieldFactor));
 			sub.setDamage(newDamage);
@@ -388,29 +388,29 @@ public class FactionsEntityListener implements Listener
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPaintingBreak(PaintingBreakEvent event)
+	public void onPaintingBreak(HangingBreakEvent event)
 	{
 		if (event.isCancelled()) return;
 		
-		if (! (event instanceof PaintingBreakByEntityEvent))
+		if (! (event instanceof HangingBreakByEntityEvent))
 		{
 			return;
 		}
 
-		Entity breaker = ((PaintingBreakByEntityEvent)event).getRemover();
+		Entity breaker = ((HangingBreakByEntityEvent)event).getRemover();
 		if (! (breaker instanceof Player))
 		{
 			return;
 		}
 
-		if ( ! FactionsBlockListener.playerCanBuildDestroyBlock((Player)breaker, event.getPainting().getLocation().getBlock(), "remove paintings", false))
+		if ( ! FactionsBlockListener.playerCanBuildDestroyBlock((Player)breaker, event.getEntity().getLocation().getBlock(), "remove paintings", false))
 		{
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPaintingPlace(PaintingPlaceEvent event)
+	public void onPaintingPlace(HangingPlaceEvent event)
 	{
 		if (event.isCancelled()) return;
 

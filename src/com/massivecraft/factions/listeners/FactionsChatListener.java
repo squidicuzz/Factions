@@ -51,7 +51,7 @@ public class FactionsChatListener implements Listener
 
 		parsePattern = Pattern.compile("[{\\[]factions?_([a-zA-Z_]+)[}\\]]");
 	}
-	
+
 	/**
 	 * We offer an optional and very simple chat formating functionality.
 	 */
@@ -65,7 +65,7 @@ public class FactionsChatListener implements Listener
 	}
 
 	// this is for handling insertion of the player's faction tag, set at highest priority to give other plugins a chance to modify chat first
-	
+
 	/**
 	 * At the Highest event priority we apply chat formating.
 	 * Relation colored faction tags may or may not be disabled (Conf.chatParseTagsColored)
@@ -80,40 +80,39 @@ public class FactionsChatListener implements Listener
 	 * The side effect is that other plugins at EventPriority.HIGHEST may experience the event as cancelled. 
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled=true)
-	public synchronized void onPlayerChat(AsyncPlayerChatEvent event)
+	public void onPlayerChat(AsyncPlayerChatEvent event)
 	{
 		// Should we even parse?
 		if ( ! Conf.chatParseTags) return;
 		if (Conf.chatTagHandledByAnotherPlugin) return;
-		
+
 		Player from = event.getPlayer();
 		FPlayer fpfrom = FPlayers.i.get(from);
 		String format = event.getFormat();
 		String message = event.getMessage();
-		
+
 		String formatWithoutColor = parseTags(format, from, fpfrom);
-		
+
 		if ( ! Conf.chatParseTagsColored)
 		{
 			// The case without color is really this simple (:
 			event.setFormat(formatWithoutColor);
 			return;
 		}
-		
-		
+
 		// So you want color eh? You monster :O
-		
+
 		// 1. We cancel the chat event on EventPriority.HIGHEST
 		event.setCancelled(true);
-		
+
 		// 2. We trigger EventPriority.MONITOR manually without relation color.
 		AsyncPlayerChatEvent monitorOnlyEvent = new AsyncPlayerChatEvent(false, from, message, new HashSet<Player>(Arrays.asList(Bukkit.getOnlinePlayers())));
 		monitorOnlyEvent.setFormat(formatWithoutColor);
 		callEventAtMonitorOnly(monitorOnlyEvent);
-		
+
 		// 3. We log in console the way it's usually done (as in nms.NetServerHandler line~793).
 		Bukkit.getConsoleSender().sendMessage(String.format(monitorOnlyEvent.getFormat(), monitorOnlyEvent.getPlayer().getDisplayName(), monitorOnlyEvent.getMessage()));
-			
+
 		// 4. We send out the messages to each player with relation color.
 		for (Player to : event.getRecipients())
 		{
@@ -122,18 +121,18 @@ public class FactionsChatListener implements Listener
 			to.sendMessage(String.format(formatWithColor, from.getDisplayName(), message));
         }
 	}
-	
+
 	/**
 	 * This is some nasty woodo - I know :/
 	 * I should make a pull request to Bukkit and CraftBukkit to support this feature natively
 	 */
-	public static synchronized void callEventAtMonitorOnly(Event event)
+	public static void callEventAtMonitorOnly(Event event)
 	{
 		synchronized(Bukkit.getPluginManager())
 		{
 			HandlerList handlers = event.getHandlers();
 	        RegisteredListener[] listeners = handlers.getRegisteredListeners();
-	        
+
 	        for (RegisteredListener registration : listeners)
 	        {
 	        	try
@@ -146,13 +145,13 @@ public class FactionsChatListener implements Listener
 					e.printStackTrace();
 					continue;
 				}
-	        	
+
 	        	// This rest is almost copy pasted from SimplePluginManager in Bukkit:
-	        	
+
 	        	if (!registration.getPlugin().isEnabled()) {
 	                continue;
 	            }
-	        	
+
 	            try {
 	                registration.callEvent(event);
 	            } catch (AuthorNagException ex) {
@@ -179,7 +178,7 @@ public class FactionsChatListener implements Listener
 	        }
 		}
 	}
-	
+
 	public static String parseTags(String str, Player from)
 	{
 		FPlayer fpfrom = FPlayers.i.get(from);
@@ -198,7 +197,7 @@ public class FactionsChatListener implements Listener
 	public static String parseTags(String str, Player from, FPlayer fpfrom, Player to, FPlayer fpto)
 	{
 		StringBuffer ret = new StringBuffer();
-		
+
 		Matcher matcher = parsePattern.matcher(str);
 		while (matcher.find())
 		{
@@ -208,7 +207,7 @@ public class FactionsChatListener implements Listener
 			matcher.appendReplacement(ret, produceTag(tag, args, from, fpfrom, to, fpto));
 		}
 		matcher.appendTail(ret);
-		
+
 		return ret.toString();
 	}
 	public static String produceTag(String tag, List<String> args, Player from, FPlayer fpfrom, Player to, FPlayer fpto)
@@ -244,9 +243,9 @@ public class FactionsChatListener implements Listener
 		{
 			ret = fpfrom.getFaction().getTag();
 		}
-		
+
 		if (ret == null) ret = "";
-		
+
 		return applyFormatsByName(ret, args);
 	}
 	public static String applyFormatsByName(String str, List<String> formatNames)
@@ -263,5 +262,5 @@ public class FactionsChatListener implements Listener
 		}
 		return str;
 	}
-	
+
 }

@@ -3,6 +3,7 @@ package com.massivecraft.factions;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.Level;
 import java.util.Set;
 
 import org.bukkit.block.Block;
@@ -19,9 +20,9 @@ import com.massivecraft.factions.adapters.LocationTypeAdapter;
 import com.massivecraft.factions.adapters.RelTypeAdapter;
 import com.massivecraft.factions.cmd.*;
 import com.massivecraft.factions.integration.capi.CapiFeatures;
+import com.massivecraft.factions.integration.herochat.HerochatFeatures;
 import com.massivecraft.factions.integration.Econ;
 import com.massivecraft.factions.integration.EssentialsFeatures;
-// import com.massivecraft.factions.integration.HerochatFeatures;
 import com.massivecraft.factions.integration.LWCFeatures;
 import com.massivecraft.factions.integration.SpoutFeatures;
 import com.massivecraft.factions.integration.Worldguard;
@@ -41,7 +42,7 @@ import com.massivecraft.factions.util.LazyLocation;
 import com.massivecraft.factions.zcore.MPlugin;
 import com.massivecraft.factions.zcore.util.TextUtil;
 
-import com.google.gson.GsonBuilder;
+import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
 
 
 public class P extends MPlugin
@@ -84,6 +85,18 @@ public class P extends MPlugin
 	@Override
 	public void onEnable()
 	{
+		// bit of (apparently absolutely necessary) idiot-proofing for CB version support due to changed GSON lib package name
+		try
+		{
+			Class.forName("org.bukkit.craftbukkit.libs.com.google.gson.reflect.TypeToken");
+		}
+		catch (ClassNotFoundException ex)
+		{
+			this.log(Level.SEVERE, "GSON lib not found. Your CraftBukkit build is too old (< 1.3.2) or otherwise not compatible.");
+			this.suicide();
+			return;
+		}
+
 		if ( ! preEnable()) return;
 		this.loadSuccessful = false;
 
@@ -102,7 +115,7 @@ public class P extends MPlugin
 		SpoutFeatures.setup();
 		Econ.setup();
 		CapiFeatures.setup();
-		// HerochatFeatures.setup();
+		HerochatFeatures.setup();
 		LWCFeatures.setup();
 		
 		if(Conf.worldGuardChecking)
