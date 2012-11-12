@@ -20,6 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -34,6 +35,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -185,7 +187,8 @@ public class FactionsEntityListener implements Listener
 
 	private static final Set<PotionEffectType> badPotionEffects = new LinkedHashSet<PotionEffectType>(Arrays.asList(
 		PotionEffectType.BLINDNESS, PotionEffectType.CONFUSION, PotionEffectType.HARM, PotionEffectType.HUNGER,
-		PotionEffectType.POISON, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS
+		PotionEffectType.POISON, PotionEffectType.SLOW, PotionEffectType.SLOW_DIGGING, PotionEffectType.WEAKNESS,
+		PotionEffectType.WITHER
 	));
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -391,7 +394,17 @@ public class FactionsEntityListener implements Listener
 	public void onPaintingBreak(HangingBreakEvent event)
 	{
 		if (event.isCancelled()) return;
-		
+
+		if (event.getCause() == RemoveCause.EXPLOSION)
+		{
+			Faction faction = Board.getFactionAt(new FLocation(event.getEntity().getLocation()));
+			if (faction.getFlag(FFlag.EXPLOSIONS) == false)
+			{	// faction has explosions disabled
+				event.setCancelled(true);
+				return;
+			}
+		}
+
 		if (! (event instanceof HangingBreakByEntityEvent))
 		{
 			return;
@@ -425,14 +438,23 @@ public class FactionsEntityListener implements Listener
 	{
 		if (event.isCancelled()) return;
 
-		// for now, only interested in Enderman tomfoolery
-		if (!(event.getEntity() instanceof Enderman)) return;
+		Entity entity = event.getEntity();
+
+		// for now, only interested in Enderman and Wither boss tomfoolery
+		if (!(entity instanceof Enderman) && !(entity instanceof Wither)) return;
 
 		FLocation floc = new FLocation(event.getBlock());
 		Faction faction = Board.getFactionAt(floc);
 		
-		if (faction.getFlag(FFlag.ENDERGRIEF)) return;
-		
-		event.setCancelled(true);
+		if (entity instanceof Enderman)
+		{
+			if ( ! faction.getFlag(FFlag.ENDERGRIEF))
+				event.setCancelled(true);
+		}
+		else if (entity instanceof Wither)
+		{
+			if ( ! faction.getFlag(FFlag.EXPLOSIONS))
+				event.setCancelled(true);
+		}
 	}
 }
