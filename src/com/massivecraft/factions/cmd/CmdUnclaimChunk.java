@@ -51,7 +51,7 @@ public class CmdUnclaimChunk extends FCommand
 		Board.removeAt(flocation);
 		SpoutFeatures.updateTerritoryDisplayLoc(flocation);
 
-		if (Conf.logLandUnclaims)
+		if (Conf.logLandUnclaims && !otherFaction.getId().equals(0))
 			P.p.log("Land at ("+flocation.getCoordString()+") unclaimed from the faction: "+otherFaction.getTag());
 	}
 
