@@ -101,7 +101,9 @@ public class Conf
 	public static Set<String> herochatAlliesWorlds = new HashSet<String>();
 	
 	public static String herochatAllyName = "Allies";
-	
+
+	public static boolean broadcastDescriptionChanges = false;
+
 	public static double autoLeaveAfterDaysOfInactivity = 10.0;
 	public static double autoLeaveRoutineRunsEveryXMinutes = 5.0;
 	public static boolean removePlayerDataWhenBanned = true;
@@ -299,6 +301,8 @@ public class Conf
 		materialsContainer.add(Material.JUKEBOX);
 		materialsContainer.add(Material.BREWING_STAND);
 		materialsContainer.add(Material.ENCHANTMENT_TABLE);
+		materialsContainer.add(Material.ANVIL);
+		materialsContainer.add(Material.BEACON);
 		
 		materialsEditOnInteract.add(Material.DIODE_BLOCK_OFF);
 		materialsEditOnInteract.add(Material.DIODE_BLOCK_ON);
@@ -329,6 +333,8 @@ public class Conf
 		monsters.add(EntityType.SKELETON);
 		monsters.add(EntityType.SLIME);
 		monsters.add(EntityType.SPIDER);
+		monsters.add(EntityType.WITCH);
+		monsters.add(EntityType.WITHER);
 		monsters.add(EntityType.ZOMBIE);
 		
 		spoutHealthBarColorUnderQuota.put(1.0d, "&2");
