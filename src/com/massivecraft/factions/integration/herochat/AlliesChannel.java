@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bukkit.ChatColor;
 
+import com.dthielke.herochat.MessageFormatSupplier;
 import com.massivecraft.factions.Conf;
 import com.massivecraft.factions.struct.Rel;
 
@@ -39,4 +40,16 @@ public class AlliesChannel extends FactionsChannelAbstract
 	
 	@Override public boolean isMuted() { return Conf.herochatAlliesMuted; }
 	@Override public void setMuted(boolean value) { Conf.herochatAlliesMuted = value; }
+
+	@Override
+	public MessageFormatSupplier getFormatSupplier() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sendRawMessage(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }
