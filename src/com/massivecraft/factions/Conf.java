@@ -300,8 +300,8 @@ public class Conf
 		materialsContainer.add(Material.JUKEBOX);
 		materialsContainer.add(Material.BREWING_STAND);
 		materialsContainer.add(Material.ENCHANTMENT_TABLE);
-		materialsContainer.add(Material.ANVIL);
-		materialsContainer.add(Material.BEACON);
+		//materialsContainer.add(Material.ANVIL);
+		//materialsContainer.add(Material.BEACON);
 		
 		materialsEditOnInteract.add(Material.DIODE_BLOCK_OFF);
 		materialsEditOnInteract.add(Material.DIODE_BLOCK_ON);
@@ -332,8 +332,8 @@ public class Conf
 		monsters.add(EntityType.SKELETON);
 		monsters.add(EntityType.SLIME);
 		monsters.add(EntityType.SPIDER);
-		monsters.add(EntityType.WITCH);
-		monsters.add(EntityType.WITHER);
+		//monsters.add(EntityType.WITCH);
+		//monsters.add(EntityType.WITHER);
 		monsters.add(EntityType.ZOMBIE);
 		
 		spoutHealthBarColorUnderQuota.put(1.0d, "&2");

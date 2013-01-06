@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonSyntaxException;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.massivecraft.factions.zcore.util.DiscUtil;
 import com.massivecraft.factions.zcore.util.TextUtil;
 

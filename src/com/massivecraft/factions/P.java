@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -42,7 +42,7 @@ import com.massivecraft.factions.zcore.MPlugin;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
+import com.google.gson.GsonBuilder;
 
 
 public class P extends MPlugin
@@ -87,11 +87,11 @@ public class P extends MPlugin
 		// bit of (apparently absolutely necessary) idiot-proofing for CB version support due to changed GSON lib package name
 		try
 		{
-			Class.forName("org.bukkit.craftbukkit.libs.com.google.gson.reflect.TypeToken");
+			Class.forName("com.google.gson.reflect.TypeToken");
 		}
 		catch (ClassNotFoundException ex)
 		{
-			this.log(Level.SEVERE, "GSON lib not found. Your CraftBukkit build is too old (< 1.3.2) or otherwise not compatible.");
+			this.log(Level.SEVERE, "GSON lib not found.");
 			this.suicide();
 			return;
 		}
@@ -218,7 +218,7 @@ public class P extends MPlugin
 	// enabled or use of the Factions f command without a slash; combination of isPlayerFactionChatting() and isFactionsCommand()
 	
 	
-	public boolean shouldLetFactionsHandleThisChat(AsyncPlayerChatEvent event)
+	public boolean shouldLetFactionsHandleThisChat(PlayerChatEvent event)
 	{
 		if (event == null) return false;
 		return (isPlayerFactionChatting(event.getPlayer()) || isFactionsCommand(event.getMessage()));

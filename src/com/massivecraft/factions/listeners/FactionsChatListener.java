@@ -16,7 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.plugin.AuthorNagException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
@@ -56,7 +56,7 @@ public class FactionsChatListener implements Listener
 	 * We offer an optional and very simple chat formating functionality.
 	 */
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-	public void lowPlayerChatEvent(AsyncPlayerChatEvent event)
+	public void lowPlayerChatEvent(PlayerChatEvent event)
 	{
 		if (Conf.chatSetFormat)
 		{
@@ -80,7 +80,7 @@ public class FactionsChatListener implements Listener
 	 * The side effect is that other plugins at EventPriority.HIGHEST may experience the event as cancelled. 
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled=true)
-	public void onPlayerChat(AsyncPlayerChatEvent event)
+	public void onPlayerChat(PlayerChatEvent event)
 	{
 		// Should we even parse?
 		if ( ! Conf.chatParseTags) return;
@@ -106,7 +106,7 @@ public class FactionsChatListener implements Listener
 		event.setCancelled(true);
 
 		// 2. We trigger EventPriority.MONITOR manually without relation color.
-		AsyncPlayerChatEvent monitorOnlyEvent = new AsyncPlayerChatEvent(false, from, message, new HashSet<Player>(Arrays.asList(Bukkit.getOnlinePlayers())));
+		PlayerChatEvent monitorOnlyEvent = new PlayerChatEvent(from, message);
 		monitorOnlyEvent.setFormat(formatWithoutColor);
 		callEventAtMonitorOnly(monitorOnlyEvent);
 
