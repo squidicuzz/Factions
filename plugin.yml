@@ -1,5 +1,5 @@
 name: Factions
-version: 1.8.1_mcwars_2013-1-5
+version: 1.8.1_mcwars_2013-1-6
 main: com.massivecraft.factions.P
 authors: [Olof Cayorion Larsson, Brett Flannigan]
 softdepend: [PermissionsEx, Permissions, Essentials, EssentialsChat, HeroChat, iChat, LocalAreaChat, LWC, nChat, ChatManager, CAPI, AuthMe, Vault, Spout, WorldEdit, WorldGuard, AuthDB, CaptureThePoints, CombatTag]
@@ -24,6 +24,7 @@ permissions:
   factions.config: {description: change a conf.json setting}
   factions.create: {description: create a new faction}
   factions.deinvite: {description: remove a pending invitation}
+  factions.demote: {description: demote a player in a faction}
   factions.description: {description: change the faction description}
   factions.disband: {description: disband a faction}
   factions.flag: {description: read faction flags}
@@ -48,13 +49,12 @@ permissions:
   factions.money.f2p: {description: transfer money from faction to player}
   factions.money.p2f: {description: transfer money from player to faction}
   factions.money.withdraw: {description: withdraw money from your faction bank}
-  factions.officer: {description: give or revoke officer rights}
-  factions.officer.any: {description: give or revoke officer rights for any player in any faction}
   factions.open: {description: switch if invitation is required to join}
   factions.perm: {description: change faction permissions}
   factions.power: {description: show player power info}
   factions.power.any: {description: view an other players power level}
   factions.powerboost: {description: apply permanent power bonus/penalty to specified player or faction}
+  factions.promote: {description: promote a player in a faction}
   factions.relation: {description: set relation wish to another faction}
   factions.reload: {description: reload data file(s) from disk}
   factions.save: {description: save all data to disk}
@@ -129,6 +129,7 @@ permissions:
       factions.cape.*: true
       factions.claim: true
       factions.deinvite: true
+      factions.demote: true
       factions.description: true
       factions.disband: true
       factions.flag: true
@@ -142,11 +143,11 @@ permissions:
       factions.list: true
       factions.map: true
       factions.money.*: true
-      factions.officer: true
       factions.open: true
       factions.perm: true
       factions.power: true
       factions.power.any: true
+      factions.promote: true
       factions.relation: true
       factions.seechunk: true
       factions.sethome: true
