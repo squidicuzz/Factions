@@ -55,8 +55,9 @@ public class FactionsPlayerListener implements Listener
 		
 		// Update the lastLoginTime for this fplayer
 		me.setLastLoginTime(System.currentTimeMillis());
+		// Set NoBoom timer update.
 		Faction faction = me.getFaction();
-		if( me.hasFaction() ) {
+		if(me.hasFaction()) {
 			//Notify our faction that the number of online players has changed.	
 			faction.updateOfflineExplosionProtection();
 		}
@@ -74,15 +75,16 @@ public class FactionsPlayerListener implements Listener
 
 		// Make sure player's power is up to date when they log off.
 		me.getPower();
+				
+		// and update their last login time to point to when the logged off, for auto-remove routine
+		me.setLastLoginTime(System.currentTimeMillis());
 		
+		// Set NoBoom timer update.
 		Faction faction = me.getFaction();
-		if( me.hasFaction() ) {
+		if(me.hasFaction()) {
 			//Notify our faction that the number of online players has changed.	
 			faction.updateOfflineExplosionProtection();
 		}
-		
-		// and update their last login time to point to when the logged off, for auto-remove routine
-		me.setLastLoginTime(System.currentTimeMillis());
 
 		SpoutFeatures.playerDisconnect(me);
 	}

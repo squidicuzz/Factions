@@ -129,27 +129,16 @@ public class FactionsEntityListener implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityExplode(EntityExplodeEvent event)
 	{
-		if ( event.isCancelled()) return;
+		if (event.isCancelled()) return;
 		
 		// NoBoom explosion Protection
 	    if (event.getEntity() instanceof Fireball || event.getEntity() instanceof Creeper || event.getEntity() instanceof Explosive)
 	    {
 	    	Faction faction = Board.getFactionAt(new FLocation(event.getLocation().getBlock()));
-	    	// Only update Explosion Protection on TNTPrimed or Fireball from within the chunk..
-	    	if ( !faction.hasOfflineExplosionProtection() )
+	    	// Only update Explosion Protection on Explosive or Fireball from within the chunk..
+	    	if (!faction.hasOfflineExplosionProtection())
 	    		faction.updateOfflineExplosionProtection(); 
 	    }
-
-		for (Block block : event.blockList())
-		{
-			Faction faction = Board.getFactionAt(new FLocation(block));
-			if (faction.hasOfflineExplosionProtection())
-			{
-				// faction is peaceful and has explosions set to disabled
-				event.setCancelled(true);
-				return;
-			}
-		}
 		
 		// Flag Explosions Disable
 		Set<FLocation> explosionLocs = new HashSet<FLocation>();
@@ -160,7 +149,7 @@ public class FactionsEntityListener implements Listener
 		for (FLocation loc : explosionLocs)
 		{
 			Faction faction = Board.getFactionAt(loc);
-			if (faction.getFlag(FFlag.EXPLOSIONS) == false)
+			if (faction.getFlag(FFlag.EXPLOSIONS) == false || faction.hasOfflineExplosionProtection())
 			{
 				// faction has explosions disabled
 				event.setCancelled(true);

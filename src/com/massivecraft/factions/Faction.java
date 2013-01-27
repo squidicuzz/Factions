@@ -87,7 +87,6 @@ public class Faction extends Entity implements EconomyParticipator
 	// FIELD: lastOnlineTime
 	private long lastOnlineTime;
 	
-	
 	// FIELD: account (fake field)
 	// Bank functions
 	public double money;
@@ -629,20 +628,18 @@ public class Faction extends Entity implements EconomyParticipator
 	public void updateOfflineExplosionProtection() {
 		//We've either gained or lost a player.
 		
-		if (id == "-1" || id == "-2" || getId() == "0")
+		if (id == "-1" || id == "-2" || id == "0")
 		{
 			return;
 		}
 		
-		if (this.getOnlinePlayers().size() <= 1 && this.getLastOnlineTime() + ( Conf.offlineExplosionProtectionDelay * 60 * 1000 ) < System.currentTimeMillis()) 
-		{
+		if (this.getOnlinePlayers().size() <= 1 && this.getLastOnlineTime() + (Conf.offlineExplosionProtectionDelay * 60 * 1000 ) < System.currentTimeMillis()) {
 			//No one is online, set the last online time
 			this.lastOnlineTime = System.currentTimeMillis();
 		}
 	}
 	
-	public boolean hasOfflineExplosionProtection() 
-	{
+	public boolean hasOfflineExplosionProtection() {
 		if (this.id == "-1" || this.id == "-2" )
 		{
 			return true;
@@ -651,9 +648,9 @@ public class Faction extends Entity implements EconomyParticipator
 		{
 			return true;
 		}
-		
+
 		long lastonlinetime = (long) (this.getLastOnlineTime() + ( Conf.offlineExplosionProtectionDelay * 60 * 1000 ));
-		
+
 		//No protection if we are online.
 		if ( this.getOnlinePlayers().size() > 0 || this.isNone() ) 
 		{
@@ -663,7 +660,7 @@ public class Faction extends Entity implements EconomyParticipator
 		{
 			updateOfflineExplosionProtection();
 		}
-				
+
 		if ( lastonlinetime > System.currentTimeMillis())
 		{
 			return false;

@@ -166,7 +166,7 @@ public class Conf
 
 	//public static double considerFactionsReallyOfflineAfterXMinutes = 0.0;
 	
-	public static boolean protectOfflineFactionsFromExplosions = true;
+	public static boolean protectOfflineFactionsFromExplosions = false;
 	public static double offlineExplosionProtectionDelay = 2.0;
 	
 	public static int actionDeniedPainAmount = 2;
