@@ -41,7 +41,7 @@ public class CmdPromote extends FCommand
 		
 		if (you == fme)
 		{
-			msg("<b>The target player musn't be yourself.");
+			msg("<b>The target player mustn't be yourself.");
 			return;
 		}
 
@@ -52,7 +52,7 @@ public class CmdPromote extends FCommand
 				return;
 			}
 			you.setRole(Rel.MEMBER);
-			myFaction.msg("%s<i>was promoted to being a member of your faction.", you.describeTo(myFaction, true));
+			myFaction.msg("%s<i> was promoted to being a member of your faction.", you.describeTo(myFaction, true));
 		}
 		else if (you.getRole() == Rel.MEMBER)
 		{

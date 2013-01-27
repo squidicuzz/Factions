@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import org.bukkit.ChatColor;
 
 import org.bukkit.craftbukkit.libs.com.google.gson.reflect.TypeToken;
+
+import com.massivecraft.factions.integration.Econ;
 import com.massivecraft.factions.struct.FFlag;
 import com.massivecraft.factions.struct.FPerm;
 import com.massivecraft.factions.struct.Rel;
@@ -143,12 +145,12 @@ public class Factions extends EntityCollection<Faction>
 		faction.setFlag(FFlag.FIRESPREAD, false);
 		//faction.setFlag(FFlag.LIGHTNING, false);
 		faction.setFlag(FFlag.ENDERGRIEF, false);
-
+		
 		faction.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
 		faction.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
 		faction.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
 		faction.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.TERRITORY, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT);
+		faction.setPermittedRelations(FPerm.TERRITORY, Rel.LEADER, Rel.OFFICER, Rel.MEMBER);
 	}
 	
 	public void setFlagsForWarZone(Faction faction)
@@ -167,11 +169,11 @@ public class Factions extends EntityCollection<Faction>
 		//faction.setFlag(FFlag.LIGHTNING, true);
 		faction.setFlag(FFlag.ENDERGRIEF, true);
 		
-		faction.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.TERRITORY, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT);
+        faction.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+        faction.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+        faction.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+        faction.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.RECRUIT, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+        faction.setPermittedRelations(FPerm.TERRITORY, Rel.LEADER, Rel.OFFICER, Rel.MEMBER);
 	}
 	
 	
@@ -256,6 +258,27 @@ public class Factions extends EntityCollection<Faction>
 	public boolean isTagTaken(String str)
 	{
 		return this.getByTag(str) != null;
+	}
+
+	public void econLandRewardRoutine()
+	{
+		if ( ! Econ.shouldBeUsed()) return;
+
+		P.p.log("Running econLandRewardRoutine...");
+		for (Faction faction : this.get())
+		{
+			int landCount = faction.getLandRounded();
+			if (!faction.getFlag(FFlag.PEACEFUL) && landCount > 0)
+			{
+				Set<FPlayer> players = faction.getFPlayers();
+				int playerCount = players.size();
+				double reward = Conf.econLandReward * landCount / playerCount;
+				for (FPlayer player : players)
+				{
+					Econ.modifyMoney(player, reward, "to own faction land", "for faction owning " + landCount + " land divided among " + playerCount + " member(s)");
+				}
+			}
+		}
 	}
 
 }

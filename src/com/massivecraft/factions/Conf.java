@@ -27,6 +27,7 @@ public class Conf
 	public static Map<FFlag, Boolean> factionFlagDefaults;
 	public static Map<FFlag, Boolean> factionFlagIsChangeable;
 	public static Map<FPerm, Set<Rel>> factionPermDefaults;
+	public static Rel factionRankDefault = Rel.RECRUIT;
 	
 	// Power
 	public static double powerPlayerMax = 10.0;
@@ -48,7 +49,7 @@ public class Conf
 	public static String prefixLeader = "**";
 	public static String prefixOfficer = "*";
 	public static String prefixMember = "+";
-	public static String prefixRecruit = "";
+	public static String prefixRecruit = "-";
 	
 	public static int factionTagLengthMin = 3;
 	public static int factionTagLengthMax = 10;
@@ -245,6 +246,9 @@ public class Conf
 	public static double econCostTruce = 0.0;
 	public static double econCostNeutral = 0.0;
 	public static double econCostEnemy = 0.0;
+
+	public static int    econLandRewardTaskRunsEveryXMinutes = 20;
+	public static double econLandReward = 0.00;
 	
 	//Faction banks, to pay for land claiming and other costs instead of individuals paying for them
 	public static boolean bankEnabled = true;

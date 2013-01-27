@@ -41,7 +41,7 @@ public class CmdDemote extends FCommand
 		
 		if (you == fme)
 		{
-			msg("<b>The target player musn't be yourself.");
+			msg("<b>The target player mustn't be yourself.");
 			return;
 		}
 
@@ -52,7 +52,7 @@ public class CmdDemote extends FCommand
 				return;
 			}
 			you.setRole(Rel.RECRUIT);
-			myFaction.msg("%s<i>was demoted to being a recruit in your faction.", you.describeTo(myFaction, true));
+			myFaction.msg("%s<i> was demoted to being a recruit in your faction.", you.describeTo(myFaction, true));
 		}
 		else if (you.getRole() == Rel.OFFICER)
 		{
@@ -61,7 +61,7 @@ public class CmdDemote extends FCommand
 				return;
 			}
 			you.setRole(Rel.MEMBER);
-			myFaction.msg("%s<i>was demoted to being a member in your faction.", you.describeTo(myFaction, true));
+			myFaction.msg("%s<i> was demoted to being a member in your faction.", you.describeTo(myFaction, true));
 		}
 	}
 	
