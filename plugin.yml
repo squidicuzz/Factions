@@ -1,5 +1,5 @@
 name: Factions
-version: 1.8.1_mcwars_2013-1-6
+version: 1.8.1_mcwars_2013-1-27
 main: com.massivecraft.factions.P
 authors: [Olof Cayorion Larsson, Brett Flannigan]
 softdepend: [PermissionsEx, Permissions, Essentials, EssentialsChat, HeroChat, iChat, LocalAreaChat, LWC, nChat, ChatManager, CAPI, AuthMe, Vault, Spout, WorldEdit, WorldGuard, AuthDB, CaptureThePoints, CombatTag]
