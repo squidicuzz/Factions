@@ -62,6 +62,7 @@ public enum Permission
 	TITLE("title"),
 	UNCLAIM("unclaim"),
 	UNCLAIM_ALL("unclaimall"),
+	UNCLAIM_CHUNK("unclaimchunk"),
 	VERSION("version"),
 	;
 	
