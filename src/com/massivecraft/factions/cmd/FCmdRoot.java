@@ -93,6 +93,7 @@ public class FCmdRoot extends FCommand
 		this.addSubCommand(this.cmdAutoClaim);
 		this.addSubCommand(this.cmdUnclaim);
 		this.addSubCommand(this.cmdUnclaimall);
+		this.addSubCommand(this.cmdUnclaimChunk);
 		this.addSubCommand(this.cmdAccess);
 		this.addSubCommand(this.cmdKick);
 		this.addSubCommand(this.cmdOfficer);
